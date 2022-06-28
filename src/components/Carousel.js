@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-
+import pauseButton from "../assests/icons/play-button.png";
 
 
 function Carousel() {
@@ -15,6 +15,7 @@ function Carousel() {
     const [imgSrc, setImgeSrc] = useState('');
     const [imgAlt, setImgAlt] = useState('');
     const [photoIndex, setPhotoIndex] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     function previous() {
         setPhotoIndex(photoIndex - 1);
@@ -45,24 +46,32 @@ function Carousel() {
     }, [photoIndex])
 
     useEffect(() => {
-        let timeout = setTimeout(() => {
-            setPhotoIndex(photoIndex + 1)
-            if (photoIndex >= 9) {
-                setPhotoIndex(0);
-            }
-        }, "2500")
+
+        if (isPlaying) {
+            let timeout = setTimeout(() => {
+                setPhotoIndex(photoIndex + 1)
+                if (photoIndex >= 9) {
+                    setPhotoIndex(0);
+                }
+            }, "2500")
             return () => clearTimeout(timeout);
-    }, [photoIndex])
+        }
+    }, [photoIndex, isPlaying])
+
 
 
     return (
         <Wrapper>
             <div className="carousel">
-                <button onClick={previous}>&lt;</button>
                 <div className="imgContainer">
                     {<img key={imgId} src={imgSrc} alt={imgAlt} />}
                 </div>
-                <button onClick={next}>&gt;</button>
+                <div className="buttons">
+                    <button className="btn direction" onClick={previous}>&lt;</button>
+                    <button className="btn direction" onClick={next}>&gt;</button>
+                    <input className="btn pausePlay" type="button" onClick={() => { setIsPlaying(true) }} value="Play" />
+                    <input className="btn pausePlay" type="button" onClick={() => { setIsPlaying(false) }} value="Pause" />
+                </div>
             </div>
         </Wrapper>
     )
@@ -71,35 +80,45 @@ function Carousel() {
 export default Carousel;
 const Wrapper = styled.main`
 
-
-
-.carousel {
 display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+
+
+
+.buttons{
+    display: flex;
 flex-direction: row;
 justify-content: center;
 align-items: center;
 }
 
-button {
+.btn {
 z-index:2;
 border-radius: 6rem;
+background-color: white;
 font-weight: 900;
 font-size: 1rem;
 padding: 0.5rem 0;
 width: 3rem;
-background-color: white;
 border: 0.15rem solid black;
 
 
   :hover{
     font-size:1.3rem  }
+
+
 }
 
+.pausePlay{
+        width: 5rem;
+    }
 
 
 .imgContainer{
     height: 21rem;
-    width:34rem;
+    width:21rem;
     display: flex;
 flex-direction: row;
 justify-content: center;
