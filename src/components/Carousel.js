@@ -32,61 +32,85 @@ function Carousel() {
     useEffect(() => {
         setLoading(true);
         axios.get(`${API_URL}/photos/?client_id=${accessKey}`).then(response => {
-            // const fetchedResults = [];
 
-            // for (let key in response.data) {
-            //     fetchedResults.push({
-            //         ...response.data[key],
-            //         id: key,
-            //     });
-            // }
-            console.log(photoIndex);
             const oneItem = response.data[photoIndex];
             setDataReceived(oneItem);
-            console.log(photoIndex)
             const { id, urls, alt_description } = oneItem;
             setImgId(id);
             setImgeSrc(urls.regular);
             setImgAlt(alt_description);
-            // console.log(oneItem);
             setLoading(false);
         })
             .catch((error) => { console.log(error) })
     }, [photoIndex])
 
+    useEffect(() => {
+        let timeout = setTimeout(() => {
+            setPhotoIndex(photoIndex + 1)
+            if (photoIndex >= 9) {
+                setPhotoIndex(0);
+            }
+        }, "2500")
+            return () => clearTimeout(timeout);
+    }, [photoIndex])
+
 
     return (
         <Wrapper>
-            <button onClick={previous}>previous</button>
-            {<img key={imgId} src={imgSrc} alt={imgAlt} />}
-
-            <button onClick={next}>next</button>
+            <div className="carousel">
+                <button onClick={previous}>&lt;</button>
+                <div className="imgContainer">
+                    {<img key={imgId} src={imgSrc} alt={imgAlt} />}
+                </div>
+                <button onClick={next}>&gt;</button>
+            </div>
         </Wrapper>
     )
-
-
 }
 
 export default Carousel;
-
 const Wrapper = styled.main`
 
-button {
-display: inline-block;
-border-radius: 3px;
-padding: 0.5rem 0;
-margin: 0.5rem 1rem;
-width: 11rem;
-border: 2px solid black;
 
-  :focus{
-    background-color: yellow;
-  }
+
+.carousel {
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
 }
 
-img{
-    height: 344px;
-    width:auto;
+button {
+z-index:2;
+border-radius: 6rem;
+font-weight: 900;
+font-size: 1rem;
+padding: 0.5rem 0;
+width: 3rem;
+background-color: white;
+border: 0.15rem solid black;
+
+
+  :hover{
+    font-size:1.3rem  }
+}
+
+
+
+.imgContainer{
+    height: 21rem;
+    width:34rem;
+    display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+
+
+    img{
+        width: auto;
+        height: 80%;
+        
+    }
 }
 
 `
